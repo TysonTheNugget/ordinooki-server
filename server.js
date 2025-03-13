@@ -1,13 +1,18 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
+});
+
+// Add a root route for testing
+app.get('/', (req, res) => {
+    res.send('Server is running! Use /check-ordinookis?address=your-address to check Ordinookis.');
 });
 
 app.get('/check-ordinookis', async (req, res) => {
@@ -64,5 +69,5 @@ app.get('/check-ordinookis', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running on port ${port}`);
 });
