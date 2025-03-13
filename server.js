@@ -10,7 +10,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Add a root route for testing
+// Root route for testing
 app.get('/', (req, res) => {
     res.send('Server is running! Use /check-ordinookis?address=your-address to check Ordinookis.');
 });
