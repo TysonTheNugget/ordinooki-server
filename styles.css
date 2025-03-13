@@ -1,0 +1,154 @@
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-image: url('background.gif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.container {
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.7);
+}
+
+h1 {
+    font-size: 3em;
+    text-shadow: 3px 3px 5px black;
+    margin: 20px 0;
+}
+
+label {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+input {
+    padding: 12px;
+    font-size: 1.2em;
+    width: 80%;
+    max-width: 350px;
+    margin: 15px 0;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+button {
+    padding: 12px 24px;
+    font-size: 1.2em;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: darkred;
+}
+
+.inscription-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.inscription-item img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 3px solid #8B0000; /* Scary red border */
+    transition: transform 1s ease, opacity 1s ease;
+}
+
+.inscription-item p {
+    margin: 5px 0;
+    font-size: 1.2em;
+    color: white;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    display: none;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+#mintMessage {
+    font-size: 4em;
+    color: #ff00ff;
+    display: none;
+    animation: fadeIn 2s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.spiral {
+    animation: spiral 1s forwards;
+}
+
+@keyframes spiral {
+    0% {
+        transform: scale(0) rotate(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* Hide element initially */
+.hidden {
+    display: none;
+}
+
+/* Mobile responsiveness */
+@media only screen and (max-width: 600px) {
+    .container {
+        padding: 10px;
+        width: 90%;
+    }
+
+    h1 {
+        font-size: 2.5em;
+    }
+
+    input, button {
+        width: 100%;
+        font-size: 1em;
+    }
+
+    .inscription-item img {
+        width: 120px;
+        height: 120px;
+    }
+
+    #mintMessage {
+        font-size: 2.5em;
+    }
+}

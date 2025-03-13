@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Ordinookis Ownership</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+            background-image: url('background.gif');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            color: #ff0000;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            padding: 10px;
+        }
+        h1 {
+            font-family: 'Comic Sans MS', cursive;
+            color: #ff0000;
+            text-shadow: 2px 2px #000000;
+            border: 4px double #000000;
+            padding: 10px;
+            background-color: rgba(0,0,128,0.5);
+            font-size: 2em;
+        }
+        label {
+            font-size: 1.2em;
+        }
+        input {
+            padding: 8px;
+            font-size: 1em;
+            width: 80%;
+            max-width: 300px;
+            margin: 10px 0;
+            background-color: #c0c0c0;
+            border: 2px inset #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+            color: #ff0000;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 10px;
+            background-color: #c0c0c0;
+            border: 2px outset #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            color: #ff0000;
+        }
+        button:hover {
+            background-color: #d0d0d0;
+            border: 2px inset #ffffff;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.1em;
+            background-color: rgba(0,0,128,0.7);
+            padding: 15px;
+            border: 3px ridge #000000;
+            border-radius: 5px;
+            box-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            display: none;
+            border: 2px dotted #000000;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        .inscription-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .inscription-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 3px double #ffffff;
+            border-radius: 8px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .inscription-item p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: #ff0000;
+            border-bottom: 1px dashed #000000;
+        }
+        #mint-message {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #ff0000;
+            font-weight: bold;
+            border: 2px groove #000000;
+            padding: 5px;
+            display: inline-block;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        #spam-output {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #ff0000;
+            border: 2px dashed #000000;
+            padding: 5px;
+        }
+        .checkmark {
+            font-size: 1.5em;
+            color: #ff0000;
+            margin-left: 10px;
+        }
+        /* Popup Styles (Success) */
+        .popup-success {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,128,0.9);
+            padding: 20px;
+            border: 4px double #000000;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            z-index: 1000;
+            text-align: center;
+        }
+        .popup-content {
+            color: #ff0000;
+            font-family: 'Comic Sans MS', cursive;
+            font-size: 2em;
+            text-shadow: 2px 2px #000000;
+        }
+        .popup-checkmark {
+            font-size: 4em;
+            color: #ff0000;
+            margin-top: 10px;
+            display: inline-block;
+            animation: bounceIn 0.8s ease-out;
+        }
+        /* Popup Styles (Failure) */
+        .popup-failure {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(128,0,0,0.9);
+            padding: 20px;
+            border: 4px double #ff0000;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255,0,0,0.5);
+            z-index: 1000;
+            text-align: center;
+        }
+        .popup-failure-content {
+            color: #ff0000;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5em;
+            text-shadow: 1px 1px #000000;
+        }
+        .popup-x {
+            font-size: 4em;
+            color: #ff0000;
+            margin-top: 10px;
+            display: inline-block;
+            animation: shake 0.5s ease-in-out;
+        }
+        /* Animations */
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 5px #000000; }
+            50% { transform: scale(1.1); box-shadow: 0 0 15px #000000; }
+            100% { transform: scale(1); box-shadow: 0 0 5px #000000; }
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5em; }
+            label { font-size: 1em; }
+            input { width: 90%; font-size: 0.9em; }
+            button { font-size: 0.9em; padding: 6px 12px; }
+            #result { font-size: 1em; }
+            .inscription-item img { width: 100px; height: 100px; }
+            .inscription-item p { font-size: 0.8em; }
+            .checkmark { font-size: 1.2em; }
+            .popup-content { font-size: 1.5em; }
+            .popup-checkmark { font-size: 3em; }
+            #mint-message { font-size: 0.9em; }
+            .popup-failure-content { font-size: 1.2em; }
+            .popup-x { font-size: 3em; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Whitelist Status Check</h1>
+    <label for="address">Enter Your Ordinals Address:</label><br>
+    <input type="text" id="address" placeholder="e.g., bc1p..."><br>
+    <button id="checkButton" onclick="checkOwnership()">Check</button>
+    <div id="result">
+        <img src="spin.png" alt="Loading..." class="spinner" id="spinner">
+    </div>
+
+    <!-- Success Popup -->
+    <div id="congratsPopup" class="popup-success">
+        <div class="popup-content">Congratulations!</div>
+        <div class="popup-checkmark">✔</div>
+    </div>
+
+    <!-- Failure Popup -->
+    <div id="sorryPopup" class="popup-failure">
+        <div class="popup-failure-content">Sorry!<br>Go Mint a Taproot Wizard</div>
+        <div class="popup-x">✘</div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="successSound" src="https://cdn.pixabay.com/audio/2022/03/10/13-12-23-760_1.mp3"></audio> <!-- Zelda-type success -->
+    <audio id="failureSound" src="https://cdn.pixabay.com/audio/2023/08/23/14-36-05-789_1.mp3"></audio> <!-- Error sound -->
+
+    <script>
+        let activeController = null;
+
+        // Function to show success popup with Zelda sound
+        function showCongratsPopup() {
+            console.log('showCongratsPopup called');
+            const popup = document.getElementById('congratsPopup');
+            const sound = document.getElementById('successSound');
+            
+            popup.style.display = 'block';
+            sound.play().catch(error => {
+                console.warn('Success audio playback failed:', error);
+            });
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 3000);
+        }
+
+        // Function to show failure popup with error sound
+        function showSorryPopup() {
+            console.log('showSorryPopup called');
+            const popup = document.getElementById('sorryPopup');
+            const sound = document.getElementById('failureSound');
+            
+            popup.style.display = 'block';
+            sound.play().catch(error => {
+                console.warn('Failure audio playback failed:', error);
+            });
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 3000);
+        }
+
+        async function checkOwnership() {
+            console.log('checkOwnership triggered');
+            const address = document.getElementById('address').value.trim();
+            const resultDiv = document.getElementById('result');
+            const spinner = document.getElementById('spinner');
+
+            if (!address) {
+                resultDiv.innerHTML = "Please enter a valid Bitcoin address.";
+                console.log('No address entered');
+                return;
+            }
+
+            if (!address.startsWith('bc1p')) {
+                resultDiv.innerHTML = "Please enter a valid Taproot address (starts with 'bc1p').";
+                console.log('Invalid Taproot address');
+                return;
+            }
+
+            if (activeController) {
+                activeController.abort();
+                console.log('Aborted previous request');
+            }
+
+            activeController = new AbortController();
+            const { signal } = activeController;
+
+            resultDiv.innerHTML = '';
+            if (spinner) spinner.style.display = 'inline-block';
+            console.log(`Starting fetch for address: ${address}`);
+
+            try {
+                const response = await fetch(
+                    `http://localhost:3000/check-ordinookis?address=${encodeURIComponent(address)}`,
+                    {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' },
+                        signal
+                    }
+                );
+
+                console.log('Fetch completed, processing response');
+                if (!response.ok) {
+                    throw new Error(`Request failed with status ${response.status}`);
+                }
+
+                const data = await response.json();
+                const tokens = data.tokens || [];
+
+                if (spinner) spinner.style.display = 'none';
+
+                if (tokens.length > 0) {
+                    const ownershipText = document.createElement('span');
+                    ownershipText.textContent = `You own ${tokens.length} Ordinookis inscription(s)!`;
+                    
+                    const checkmark = document.createElement('span');
+                    checkmark.textContent = '✔';
+                    checkmark.className = 'checkmark';
+                    
+                    resultDiv.appendChild(ownershipText);
+                    resultDiv.appendChild(checkmark);
+
+                    const gallery = document.createElement('div');
+                    gallery.className = 'inscription-gallery';
+
+                    tokens.forEach(token => {
+                        const item = document.createElement('div');
+                        item.className = 'inscription-item';
+
+                        const img = document.createElement('img');
+                        img.src = `https://static.unisat.io/content/${token.id}`;
+                        img.alt = `Inscription #${token.inscriptionNumber}`;
+
+                        const number = document.createElement('p');
+                        number.textContent = `#${token.inscriptionNumber}`;
+
+                        item.appendChild(img);
+                        item.appendChild(number);
+                        gallery.appendChild(item);
+                    });
+
+                    resultDiv.appendChild(gallery);
+
+                    const mintMessage = document.createElement('div');
+                    mintMessage.id = 'mint-message';
+                    mintMessage.textContent = 'Free Mint Eligible';
+                    resultDiv.appendChild(mintMessage);
+
+                    const whenMintButton = document.createElement('button');
+                    whenMintButton.textContent = 'When Mint';
+                    whenMintButton.onclick = spamWhenMint;
+                    resultDiv.appendChild(whenMintButton);
+
+                    const spamOutput = document.createElement('div');
+                    spamOutput.id = 'spam-output';
+                    resultDiv.appendChild(spamOutput);
+
+                    // Show success popup
+                    showCongratsPopup();
+
+                    console.log(`Displayed ${tokens.length} inscriptions`);
+                } else {
+                    resultDiv.innerHTML = "You don't own any Ordinookis inscriptions.";
+                    console.log('No inscriptions found');
+                    // Show failure popup
+                    showSorryPopup();
+                }
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    if (spinner) spinner.style.display = 'none';
+                    resultDiv.innerHTML = `Error: ${error.message}`;
+                    console.error('Fetch error:', error);
+                } else {
+                    console.log('Request was aborted, ready for next check');
+                }
+            } finally {
+                activeController = null;
+                console.log('Request completed or aborted');
+            }
+        }
+
+        function spamWhenMint() {
+            const spamOutput = document.getElementById('spam-output');
+            spamOutput.innerHTML = '';
+
+            let count = 0;
+            const maxSpam = 35;
+            const interval = setInterval(() => {
+                if (count < maxSpam) {
+                    const line = document.createElement('p');
+                    line.textContent = 'Whenever Wizards Mint';
+                    spamOutput.appendChild(line);
+                    count++;
+                    
+                    // When we reach the 35th message, add the Twitter button
+                    if (count === maxSpam) {
+                        const twitterButton = document.createElement('button');
+                        twitterButton.textContent = 'Follow Us';
+                        twitterButton.onclick = () => {
+                            window.open('https://x.com/ordinooki', '_blank');
+                        };
+                        spamOutput.appendChild(twitterButton);
+                        clearInterval(interval);
+                    }
+                }
+            }, 200);
+        }
+    </script>
+</body>
+</html>
